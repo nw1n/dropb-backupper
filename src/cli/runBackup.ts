@@ -14,11 +14,11 @@ async function main() {
         // only run this once, then new auth code is needed
         await writeNewRefreshToken()
     }
-    if (false) {
+    if (true) {
         // should be run every time to get a new access token
         await writeNewAccessToken()
     }
-    if (false) {
+    if (true) {
         emptyFilesToUploadFolder()
         emptyZipToUploadFolder()
         copyFilesToUploadFolder(srcFolderArg)
