@@ -1,6 +1,6 @@
 import fs from 'fs'
 import { Dropbox } from 'dropbox'
-import { readAccessTokenFromFile, writeNewRefreshToken, writeNewAccessToken } from '../lib/util'
+import { readAccessTokenFromFile, writeNewRefreshToken, writeNewAccessToken } from '../lib/tokenManager'
 
 main()
 

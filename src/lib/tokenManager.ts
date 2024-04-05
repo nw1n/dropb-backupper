@@ -1,4 +1,4 @@
-import Config from '../lib/config'
+import Config from './config'
 import fs from 'fs'
 
 export async function writeNewAccessToken() {
