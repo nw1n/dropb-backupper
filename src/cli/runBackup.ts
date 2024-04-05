@@ -70,6 +70,9 @@ async function uploadLatestBackupToDropbox() {
     const dbx = new Dropbox({ accessToken: accessToken })
 
     const zipFile = getLatestFileInFolder(Config.getInstance().zipToUploadFolder)
+    if (!zipFile) {
+        throw new Error('No zip file found')
+    }
     const fileContents = fs.readFileSync(zipFile)
     const destFileName = path.basename(zipFile)
     const destPath = `/backups/${destFileName}`
@@ -106,8 +109,13 @@ async function listDropboxFiles() {
     }
 }
 
-function getLatestFileInFolder(folderPath: string) {
+function getLatestFileInFolder(folderPath: string): string | undefined {
     const files = fs.readdirSync(folderPath)
+
+    if (files.length === 0) {
+        return undefined
+    }
+
     const sortedFiles = files.sort((a, b) => {
         return (
             fs.statSync(path.join(folderPath, b)).mtime.getTime() -
