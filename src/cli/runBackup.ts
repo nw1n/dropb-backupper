@@ -14,18 +14,55 @@ async function main() {
         // only run this once, then new auth code is needed
         await writeNewRefreshToken()
     }
-    if (true) {
+    if (false) {
         // should be run every time to get a new access token
         await writeNewAccessToken()
     }
-    if (true) {
+    if (false) {
         emptyFilesToUploadFolder()
         emptyZipToUploadFolder()
         copyFilesToUploadFolder(srcFolderArg)
         createZip()
     }
-    //await listDropboxFiles()
+    await truncateDropboxFolderToSize()
     await uploadLatestBackupToDropbox()
+}
+
+async function truncateDropboxFolderToSize() {
+    const maxSizeInMB = 200
+    const maxSize = maxSizeInMB * 1024 * 1024
+
+    const accessToken = readAccessTokenFromFile()
+    const dbx = new Dropbox({ accessToken: accessToken })
+
+    // get total size
+    const filesInFolder = await dbx.filesListFolder({ path: '/backups' })
+    // sort files in folder by date changed so that the newest files are first in list
+    const filesInFolderSortedByDateChanged = filesInFolder.result.entries.sort(
+        (a: any, b: any) => b.client_modified - a.client_modified,
+    )
+    const files = filesInFolderSortedByDateChanged
+    const totalSize = files.reduce((acc, file: any) => acc + file.size, 0)
+    console.log('Total size:', totalSize)
+    console.log('Files:', files)
+
+    if (totalSize < maxSize) {
+        console.log('No need to truncate')
+        return
+    }
+
+    // delete oldest files until total size is below max size
+    let deletedSize = 0
+    const lengthOfFiles = files.length
+    for (let i = lengthOfFiles - 1; i >= 0; i--) {
+        const file: any = files[i]
+        await dbx.filesDeleteV2({ path: file.path_display })
+        deletedSize += file.size
+        console.log('Deleted file:', file.path_display, file.size)
+        if (totalSize - deletedSize < maxSize) {
+            break
+        }
+    }
 }
 
 async function uploadLatestBackupToDropbox() {
