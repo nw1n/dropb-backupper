@@ -1,3 +1,5 @@
 node_modules
 .secrets
-files-to-backup
+files-to-upload
+dummy-upload-source
+zip-to-upload

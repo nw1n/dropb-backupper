@@ -1,10 +1,15 @@
 import fs from 'fs'
 import { Dropbox } from 'dropbox'
 import { readAccessTokenFromFile, writeNewRefreshToken, writeNewAccessToken } from '../lib/tokenManager'
+import { copyFilesToUploadFolder, createZip } from '../lib/createZip'
 
 main()
 
 async function main() {
+    //copyFilesToUploadFolder()
+    createZip()
+    return
+
     if (false) {
         // only run this once, then new auth code is needed
         await writeNewRefreshToken()
