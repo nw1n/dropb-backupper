@@ -1,16 +1,17 @@
 import fs from 'fs'
 import { Dropbox } from 'dropbox'
-import { writeAccessTokenToFile, readAccessTokenFromFile, w } from '../lib/util'
+import { writeAccessTokenToFile, readAccessTokenFromFile, writeNewRefreshToken, writeNewAccessToken } from '../lib/util'
+
 let accessToken: string
 
 main()
 
 async function main() {
-    if (true) {
+    if (false) {
         // only run this once, then new auth code is needed
         await writeNewRefreshToken()
     }
-    if (true) {
+    if (false) {
         // should be run every time to get a new access token
         await writeNewAccessToken()
     }
@@ -32,11 +33,5 @@ async function doDropboxStuff() {
         console.log(JSON.stringify(response, null, 2))
     } catch (error: any) {
         console.error('Error fetching files:', error.message)
-    }
-
-    try {
-        console.log('Uploading file...')
-    } catch (error: any) {
-        console.error('Error uploading file:', error.message)
     }
 }

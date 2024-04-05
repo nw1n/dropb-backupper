@@ -4,6 +4,12 @@ import { SecretFilePaths } from '../lib/config'
 const { accesTokenFile, refreshTokenFile, secretsFile } = secretFilePaths
 const { dbAppKey, appSecret, authorizationCode } = readSecretsFromFile()
 
+interface Secrets {
+    dbAppKey: string
+    appSecret: string
+    authorizationCode: string
+}
+
 let accessToken: string
 
 export async function writeNewAccessToken() {
@@ -65,10 +71,10 @@ export async function writeNewRefreshToken() {
     }
 }
 
-export function readSecretsFromFile(): SecretFilePaths {
+export function readSecretsFromFile(): Secrets {
     try {
         const data = fs.readFileSync(secretsFile)
-        return JSON.parse(data.toString()) as SecretFilePaths
+        return JSON.parse(data.toString()) as Secrets
     } catch (error: any) {
         console.error('Error reading secrets from file:', error.message)
         return { dbAppKey: '', appSecret: '', authorizationCode: '' }
