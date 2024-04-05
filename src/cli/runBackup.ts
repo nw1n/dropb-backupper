@@ -7,9 +7,9 @@ import e from 'express'
 main()
 
 async function main() {
-    emptyFilesToUploadFolder()
-    emptyZipToUploadFolder()
-    copyFilesToUploadFolder()
+    //emptyFilesToUploadFolder()
+    //emptyZipToUploadFolder()
+    //copyFilesToUploadFolder()
     createZip()
     return
 

@@ -21,13 +21,29 @@ export function copyFilesToUploadFolder() {
     })
 }
 
+function getDateTimeStringForFileName() {
+    const date = new Date()
+    const year = date.getFullYear()
+    const month = padZero(date.getMonth() + 1)
+    const day = padZero(date.getDate())
+    const hours = padZero(date.getHours())
+    const minutes = padZero(date.getMinutes())
+    const seconds = padZero(date.getSeconds())
+    return `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`
+}
+
+function padZero(value: number) {
+    return value < 10 ? '0' + value : value
+}
+
 export function createZip() {
     const srcFolder = Config.getInstance().filesToUploadPathFolder
     const destFolder = Config.getInstance().zipToUploadFolder
-    const destFileName = 'files-to-upload.zip'
+    const destFile = `${getDateTimeStringForFileName()}_backup.zip`
+    console.log(`Creating zip file: ${destFile}`)
 
-    // Create a zip file from the source folder
-    exec(`zip -r ${destFolder}/${destFileName} ${srcFolder}`, (error, stdout, stderr) => {
+    // Create a zip file from the source folder without including directory structure
+    exec(`cd ${srcFolder} && zip -j ${destFolder}/${destFile} *`, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error creating zip file: ${error}`)
             return
