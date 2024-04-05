@@ -5,12 +5,14 @@
     "main": "index.js",
     "scripts": {
         "start": "ts-node src/server.ts",
-        "dev": "npm run start"
+        "dev": "npm run start",
+        "backup": "ts-node src/cli/runBackup.ts"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "dropbox": "^10.34.0",
         "express": "^4.19.2"
     },
     "devDependencies": {
