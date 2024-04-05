@@ -6,6 +6,7 @@ import path from 'path'
 import Config from '../lib/config'
 
 const srcFolderArg = process.argv[2]
+const dropBoxFolder = '/backups'
 
 main()
 
@@ -29,14 +30,14 @@ async function main() {
 }
 
 async function truncateDropboxFolderToSize() {
-    const maxSizeInMB = 200
+    const maxSizeInMB = 500
     const maxSize = maxSizeInMB * 1024 * 1024
 
     const accessToken = readAccessTokenFromFile()
     const dbx = new Dropbox({ accessToken: accessToken })
 
     // get total size
-    const filesInFolder = await dbx.filesListFolder({ path: '/backups' })
+    const filesInFolder = await dbx.filesListFolder({ path: dropBoxFolder })
     // sort files in folder by date changed so that the newest files are first in list
     const filesInFolderSortedByDateChanged = filesInFolder.result.entries.sort(
         (a: any, b: any) => b.client_modified - a.client_modified,
@@ -75,7 +76,7 @@ async function uploadLatestBackupToDropbox() {
     }
     const fileContents = fs.readFileSync(zipFile)
     const destFileName = path.basename(zipFile)
-    const destPath = `/backups/${destFileName}`
+    const destPath = `${dropBoxFolder}/${destFileName}`
 
     try {
         const response = await dbx.filesUpload({ path: destPath, contents: fileContents })
@@ -96,7 +97,7 @@ async function listDropboxFiles() {
     const dbx = new Dropbox({ accessToken: accessToken })
 
     try {
-        const response = await dbx.filesListFolder({ path: '/backups' })
+        const response = await dbx.filesListFolder({ path: dropBoxFolder })
 
         if (response.status !== 200) {
             console.log('Error fetching files', response)
