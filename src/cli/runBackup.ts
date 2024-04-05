@@ -1,12 +1,15 @@
 import fs from 'fs'
 import { Dropbox } from 'dropbox'
 import { readAccessTokenFromFile, writeNewRefreshToken, writeNewAccessToken } from '../lib/tokenManager'
-import { copyFilesToUploadFolder, createZip } from '../lib/createZip'
+import { copyFilesToUploadFolder, createZip, emptyFilesToUploadFolder, emptyZipToUploadFolder } from '../lib/createZip'
+import e from 'express'
 
 main()
 
 async function main() {
-    //copyFilesToUploadFolder()
+    emptyFilesToUploadFolder()
+    emptyZipToUploadFolder()
+    copyFilesToUploadFolder()
     createZip()
     return
 

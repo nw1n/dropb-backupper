@@ -1,6 +1,7 @@
 import { exec } from 'child_process'
 import Config from './config'
-import e from 'express'
+import fs from 'fs'
+import path from 'path'
 
 export function copyFilesToUploadFolder() {
     const srcFolder = Config.getInstance().dummyUploadSourceFolder
@@ -20,40 +21,6 @@ export function copyFilesToUploadFolder() {
     })
 }
 
-export function emptyFilesToUploadFolder() {
-    const folder = Config.getInstance().filesToUploadPathFolder
-
-    // Remove all files from the destination folder
-    exec(`rm -rf ${folder}/*`, (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Error removing files: ${error}`)
-            return
-        }
-        if (stderr) {
-            console.error(`Error: ${stderr}`)
-            return
-        }
-        console.log(`Files removed successfully: ${stdout}`)
-    })
-}
-
-export function emptyZipToUploadFolder() {
-    const folder = Config.getInstance().zipToUploadFolder
-
-    // Remove all files from the destination folder
-    exec(`rm -rf ${folder}/*`, (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Error removing files: ${error}`)
-            return
-        }
-        if (stderr) {
-            console.error(`Error: ${stderr}`)
-            return
-        }
-        console.log(`Files removed successfully: ${stdout}`)
-    })
-}
-
 export function createZip() {
     const srcFolder = Config.getInstance().filesToUploadPathFolder
     const destFolder = Config.getInstance().zipToUploadFolder
@@ -69,6 +36,39 @@ export function createZip() {
             console.error(`Error: ${stderr}`)
             return
         }
-        console.log(`Zip file created successfully: ${stdout}`)
+        console.log(`Zip file created successfully:`)
+        console.log(stdout)
     })
+}
+
+export function emptyFilesToUploadFolder() {
+    const folderPath = Config.getInstance().filesToUploadPathFolder
+
+    try {
+        const files = fs.readdirSync(folderPath)
+
+        files.forEach((file) => {
+            const filePath = path.join(folderPath, file)
+            fs.unlinkSync(filePath)
+            console.log('Deleted file:', filePath)
+        })
+    } catch (err) {
+        console.error('Error deleting files:', err)
+    }
+}
+
+export function emptyZipToUploadFolder() {
+    const folderPath = Config.getInstance().zipToUploadFolder
+
+    try {
+        const files = fs.readdirSync(folderPath)
+
+        files.forEach((file) => {
+            const filePath = path.join(folderPath, file)
+            fs.unlinkSync(filePath)
+            console.log('Deleted file:', filePath)
+        })
+    } catch (err) {
+        console.error('Error deleting files:', err)
+    }
 }
