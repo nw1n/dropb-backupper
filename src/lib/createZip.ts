@@ -3,9 +3,16 @@ import Config from './config'
 import fs from 'fs'
 import path from 'path'
 
-export function copyFilesToUploadFolder() {
-    const srcFolder = Config.getInstance().dummyUploadSourceFolder
+export function copyFilesToUploadFolder(srcFolderArg: string) {
+    const srcFolder = srcFolderArg ? srcFolderArg : Config.getInstance().dummyUploadSourceFolder
     const destFolder = Config.getInstance().filesToUploadPathFolder
+
+    if (!fs.existsSync(srcFolder)) {
+        throw new Error(`Source folder does not exist: ${srcFolder}`)
+    }
+    if (!fs.existsSync(destFolder)) {
+        throw new Error(`Destination folder does not exist: ${destFolder}`)
+    }
 
     // Copy all files from the source folder to the destination folder
     exec(`cp -rf ${srcFolder}/* ${destFolder}`, (error, stdout, stderr) => {
