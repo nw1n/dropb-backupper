@@ -25,8 +25,19 @@ async function main() {
         copyFilesToUploadFolder(srcFolderArg)
         createZip()
     }
-    await truncateDropboxFolderToSize()
-    await uploadLatestBackupToDropbox()
+
+    for (let i = 0; i < 10; i++) {
+        try {
+            let truncateIsSucess = await truncateDropboxFolderToSize()
+            let uploadIsSuccess = await uploadLatestBackupToDropbox()
+            if (truncateIsSucess && uploadIsSuccess) {
+                break
+            }
+        } catch (error) {
+            console.log('Error uploading zip to Dropbox:', error)
+            await new Promise((resolve) => setTimeout(resolve, 5000))
+        }
+    }
 }
 
 async function truncateDropboxFolderToSize() {
@@ -49,7 +60,7 @@ async function truncateDropboxFolderToSize() {
 
     if (totalSize < maxSize) {
         console.log('No need to truncate')
-        return
+        return true
     }
 
     // delete oldest files until total size is below max size
@@ -64,6 +75,7 @@ async function truncateDropboxFolderToSize() {
             break
         }
     }
+    return true
 }
 
 async function uploadLatestBackupToDropbox() {
@@ -83,10 +95,10 @@ async function uploadLatestBackupToDropbox() {
 
         if (response.status !== 200) {
             console.log('Error uploading file', response)
-            return
+            return false
         }
-
         console.log('File uploaded successfully', zipFile, destPath)
+        return true
     } catch (error: any) {
         console.error('Error uploading file:', error.message)
     }
